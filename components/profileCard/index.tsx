@@ -2,7 +2,7 @@ import React, { forwardRef, useImperativeHandle } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, useAnimation } from "framer-motion";
 import { Star } from "lucide-react";
-
+import { ProfileData } from "@/types/profileCard";
 const cardVariants = {
     initial: {
         x: 0,
@@ -52,7 +52,8 @@ const ProfileCard = forwardRef(({
     isExpanded,
     setIsExpanded,
     onCardSwiped, // New prop for swipe callback
-    style, // Accept style prop for dynamic positioning
+    style,
+    cardData, // Accept style prop for dynamic positioning
 }: {
     swiped: boolean;
     setSwiped: (value: boolean) => void;
@@ -61,7 +62,8 @@ const ProfileCard = forwardRef(({
     isExpanded: boolean;
     setIsExpanded: (value: boolean) => void;
     onCardSwiped: (direction: string) => void; // Callback for when the card is swiped
-    style?: React.CSSProperties; // Optional style prop
+    style?: React.CSSProperties;
+    cardData: ProfileData // Optional style prop
 }, ref) => {
     const controls = useAnimation();
 
@@ -140,19 +142,18 @@ const ProfileCard = forwardRef(({
                 onClick={handleCardClick}
             >
                 <div className="h-80 bg-green-700"></div>
-                <CardContent className="text-center py-2">
-                    <h2 className="font-semibold text-lg">Vansh Deo</h2>
-                    <p className="text-sm text-gray-500">Video Editor</p>
-                    <div className="flex justify-center mt-1">
-                        {[...Array(4)].map((_, i) => (
+                <CardContent className="text-center py-4 px-6">
+                    <h2 className="font-semibold text-lg">{cardData.name}</h2>
+                    <p className="text-sm text-gray-500">{cardData.title}</p>
+                    <div className="flex justify-center mt-2">
+                        {[...Array(cardData.rating)].map((_, i) => (
                             <Star key={i} className="text-yellow-400 h-5 w-5" fill="currentColor" />
                         ))}
-                        <Star className="text-gray-400 h-5 w-5" />
+                        {[...Array(5 - cardData.rating)].map((_, i) => (
+                            <Star key={i} className="text-gray-400 h-5 w-5" />
+                        ))}
                     </div>
-                    <p className="text-sm mt-2">
-                        Swipe right if you love a good montage—because I turn moments into
-                        masterpieces.
-                    </p>
+                    <p className="text-sm mt-4 text-gray-600">{cardData.description}</p>
                 </CardContent>
             </Card>
         </motion.div>

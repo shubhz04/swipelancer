@@ -1,12 +1,14 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NextResponse } from 'next/server';
+import { connectToDatabase } from '@/backend/connect';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'POST') {
-        const { name, email } = req.body;
 
-        // Dummy response (You can connect this to a database)
-        return res.status(200).json({ message: `User ${name} with email ${email} created successfully!` });
+export async function POST(req: Request) {
+    try {
+        await connectToDatabase();
+
+        return NextResponse.json({ message: 'Connection successful' });
+    } catch (error) {
+        return NextResponse.json({ message: 'Error Connecting Database', error }, { status: 500 });
     }
-
-    return res.status(405).json({ message: 'Method Not Allowed' });
 }
