@@ -1,19 +1,16 @@
 'use client'
 
-
-
 import React, { forwardRef, useImperativeHandle } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, useAnimation } from "framer-motion";
-import { Star } from "lucide-react";
-import { ProfileData } from "@/types/profileCard";
+import { Currency, Star } from "lucide-react";
+import { ContractData } from "@/types/profileCard";
 const cardVariants = {
     initial: {
         x: 0,
         y: 0,
         rotate: 0,
         scale: 1,
-        top : "20%",
         width: "20rem",
         height: "auto",
         zIndex: 15,
@@ -49,7 +46,7 @@ const cardVariants = {
     },
 };
 
-const ProfileCard = forwardRef(({
+const ContractCard = forwardRef(({
     swiped,
     setSwiped,
     swiping,
@@ -68,7 +65,7 @@ const ProfileCard = forwardRef(({
     setIsExpanded: (value: boolean) => void;
     onCardSwiped: (direction: string) => void; // Callback for when the card is swiped
     style?: React.CSSProperties;
-    cardData: ProfileData // Optional style prop
+    cardData: ContractData // Optional style prop
 }, ref) => {
     const controls = useAnimation();
 
@@ -79,7 +76,7 @@ const ProfileCard = forwardRef(({
             if (!swiped && !swiping) {
                 setIsExpanded(true);
                 controls.start("expanded", { duration: 0.4 });
-                event?.stopPropagation();
+                event.stopPropagation();
             }
         },
 
@@ -88,7 +85,7 @@ const ProfileCard = forwardRef(({
             if (!swiped && !swiping) {
                 setIsExpanded(false);
                 controls.start("initial", { duration: 0.4 });
-                event?.stopPropagation();
+                event.stopPropagation();
             }
         },
 
@@ -149,20 +146,12 @@ const ProfileCard = forwardRef(({
                 <div className="h-80 bg-green-700"></div>
                 <CardContent className="text-center py-4 px-6">
                     <h2 className="font-semibold text-lg">{cardData.name}</h2>
-                    <p className="text-sm text-gray-500">{cardData.title}</p>
-                    <div className="flex justify-center mt-2">
-                        {[...Array(cardData.rating)].map((_, i) => (
-                            <Star key={i} className="text-yellow-400 h-5 w-5" fill="currentColor" />
-                        ))}
-                        {[...Array(5 - cardData.rating)].map((_, i) => (
-                            <Star key={i} className="text-gray-400 h-5 w-5" />
-                        ))}
-                    </div>
-                    <p className="text-sm mt-4 text-gray-600">{cardData.description}</p>
+                    <p className="text-sm text-gray-500">{cardData.description}</p>
+                    <p className="text-sm text-gray-500">{cardData.currency} : {cardData.pricing} : Per {cardData.pricingType}</p>
                 </CardContent>
             </Card>
         </motion.div>
     );
 });
 
-export default ProfileCard;
+export default ContractCard;

@@ -1,42 +1,54 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { NextResponse } from 'next/server';
+"use server";
 import { connectToDatabase } from '@/backend/connect';
 import User from '@/backend/db/models/user.model';
 import { cookies } from 'next/headers';
-const jwt = require("jsonwebtoken");
+import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
     try {
         await connectToDatabase();
 
-        // first we get the body of the request
+        // Parse the request body
         const body = await req.json();
-        // then we get the data from the body
-        const {  name, email, pass } = body;
+        const { name, email, password } = body;
 
+        // Check if the user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return NextResponse.json({
+                message: "User already exists.",
+                success: false,
+            }, { status: 400 });
+        }
+
+        // Create a new user
         const user = await new User({
             name,
             email,
-            pass,
+            password,
         }).save();
 
-        // Call the `getJWTToken` method on the saved `vendor`
+        // Generate a JWT token
         const token = user.getJWTToken();
 
-        const cookieStore = await cookies();
-        cookieStore.set("user_token", token, {
-            expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+        // Set the token as a cookie
+        const cookieStore = cookies();
+        (await cookieStore).set("user_token", token, {
+            expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
             httpOnly: true,
             secure: true,
         });
 
-
-        return {
-            message: "Successfully registered new vendor.",
+        return NextResponse.json({
+            message: "Successfully registered new user.",
             user,
             success: true,
-        };
+        });
     } catch (error) {
-        return NextResponse.json({ message: 'Error Connecting Database', error }, { status: 500 });
+        return NextResponse.json({
+            message: 'Error Connecting Database',
+            error,
+        }, { status: 500 });
     }
 }

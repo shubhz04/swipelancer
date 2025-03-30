@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Home, Search, Clock, User, Menu, Send } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,8 +26,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={process.env.HIDE_NEXT_ERROR_OVERLAY === "true" ? "hide-nextjs-portal" : undefined}
       >
+        <aside className="z-100 absolute w-20 h-screen flex flex-col items-center bg-blue-300 p-4 rounded-2xl justify-between">
+          <Menu className="w-6 h-6 my-4 text-gray-700" />
+          <div className="flex flex-col items-center"> {/* Container for the middle icons */}
+            <Search className="w-6 h-6 my-4 text-gray-700" />
+            <Home className="w-6 h-6 my-4 text-gray-700" />
+            <Clock className="w-6 h-6 my-4 text-gray-700" />
+            <User className="w-6 h-6 my-4 text-gray-700" />
+          </div>
+          <Send className="w-6 h-6 my-4 text-gray-700" />
+        </aside>
         {children}
       </body>
     </html>
